@@ -1,0 +1,271 @@
+openapi: 3.0.0
+info:
+  title: Sistema de Eventos - API
+  version: 1.0.0
+  description: Documentação dos endpoints das APIs do sistema de eventos.
+servers:
+  - url: http://localhost:3001
+    description: Usuários API
+  - url: http://localhost:3002
+    description: Eventos API
+  - url: http://localhost:3003
+    description: Certificados API
+  - url: http://localhost:3004
+    description: Notificações API
+  - url: http://localhost:3005
+    description: Sincronização API
+
+paths:
+  /eventos:
+    get:
+      summary: Consulta todos os eventos vigentes
+      tags: [Eventos]
+      responses:
+        200:
+          description: Lista de eventos
+    post:
+      summary: Criar novo evento
+      tags: [Eventos]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                nome_evento: { type: string }
+                template_certificado_id: { type: integer }
+      responses:
+        201:
+          description: Evento criado
+  /eventos/{id}:
+    get:
+      summary: Consulta um evento
+      tags: [Eventos]
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: integer }
+      responses:
+        200:
+          description: Evento encontrado
+        404:
+          description: Evento não encontrado
+  /certificados/{id}:
+    get:
+      summary: Consulta certificado de um participante ou verifica autenticidade do certificado
+      tags: [Certificados]
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: integer }
+      responses:
+        200:
+          description: Certificado encontrado
+        404:
+          description: Certificado não encontrado
+  /certificados:
+    post:
+      summary: Emite um certificado
+      tags: [Certificados]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                codigo_autenticacao: { type: string }
+                usuario_id: { type: integer }
+                evento_id: { type: integer }
+                presenca_id: { type: integer }
+                url_validacao: { type: string }
+      responses:
+        201:
+          description: Certificado emitido
+  /inscricoes/{id}:
+    get:
+      summary: Consulta da inscrição de um participante
+      tags: [Inscrições]
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: integer }
+      responses:
+        200:
+          description: Inscrição encontrada
+        404:
+          description: Inscrição não encontrada
+  /inscricoes:
+    post:
+      summary: Registra uma inscrição
+      tags: [Inscrições]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                usuario_id: { type: integer }
+                evento_id: { type: integer }
+                status_inscricao: { type: string }
+      responses:
+        201:
+          description: Inscrição registrada
+    delete:
+      summary: Cancela inscrição
+      tags: [Inscrições]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                id: { type: integer }
+      responses:
+        204:
+          description: Inscrição cancelada
+  /presencas:
+    post:
+      summary: Registra uma presença
+      tags: [Presenças]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                inscricao_id: { type: integer }
+                usuario_id: { type: integer }
+                evento_id: { type: integer }
+      responses:
+        201:
+          description: Presença registrada
+  /usuarios:
+    post:
+      summary: Cria um usuário
+      tags: [Usuários]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                nome: { type: string }
+                email: { type: string }
+                senha: { type: string }
+      responses:
+        201:
+          description: Usuário criado
+  /auth:
+    post:
+      summary: Rotina de autenticação
+      tags: [Auth]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email: { type: string }
+                senha: { type: string }
+      responses:
+        200:
+          description: Autenticado com sucesso
+        401:
+          description: Credenciais inválidas
+  /emails:
+    post:
+      summary: Envio de email
+      tags: [Notificações]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                para: { type: string }
+                assunto: { type: string }
+                texto: { type: string }
+                html: { type: string }
+      responses:
+        200:
+          description: E-mail enviado
+        400:
+          description: Dados inválidos
+  /template_certificado:
+    get:
+      summary: Lista todos os templates de certificado
+      tags: [TemplateCertificado]
+      responses:
+        200:
+          description: Lista de templates
+    post:
+      summary: Cria um novo template de certificado
+      tags: [TemplateCertificado]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                nome_template: { type: string }
+                conteudo_html: { type: string }
+      responses:
+        201:
+          description: Template criado
+  /template_certificado/{id}:
+    get:
+      summary: Consulta um template de certificado
+      tags: [TemplateCertificado]
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: integer }
+      responses:
+        200:
+          description: Template encontrado
+        404:
+          description: Template não encontrado
+    put:
+      summary: Atualiza um template de certificado
+      tags: [TemplateCertificado]
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: integer }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                nome_template: { type: string }
+                conteudo_html: { type: string }
+      responses:
+        200:
+          description: Template atualizado
+    delete:
+      summary: Exclui um template de certificado
+      tags: [TemplateCertificado]
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: integer }
+      responses:
+        204:
+          description: Template excluído
