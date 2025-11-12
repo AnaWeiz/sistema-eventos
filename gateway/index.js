@@ -9,7 +9,6 @@ const path = require('path');
 dotenv.config({ path: '../.env' });
 
 const app = express();
-app.use(bodyParser.json());
 
 //Registrar logs em arquivo
 function registrarLog(req, res, next) {
@@ -18,27 +17,6 @@ function registrarLog(req, res, next) {
   next();
 }
 app.use(registrarLog);
-
-//Autenticação JWT
-app.use((req, res, next) => {
-  //Rotas públicas
-  const rotasPublicas = [
-    /^\/auth/,
-    /^\/usuarios/,
-    /^\/docs/,
-  ];
-  if (rotasPublicas.some(r => r.test(req.path))) return next();
-
-  const authHeader = req.headers.authorization;
-  if (!authHeader) return res.status(401).json({ erro: 'Token não informado' });
-  const token = authHeader.replace('Bearer ', '');
-  try {
-    jwt.verify(token, process.env.JWT_SECRET);
-    next();
-  } catch {
-    res.status(401).json({ erro: 'Token inválido' });
-  }
-});
 
 //Proxy para cada microserviço
 app.use('/eventos', createProxyMiddleware({ target: 'http://localhost:3002', changeOrigin: true }));
