@@ -30,10 +30,9 @@ async function buscarEvento(req, res) {
 async function criarEvento(req, res) {
   try {
     const sql =
-      'INSERT INTO eventos (nome_evento, status_evento, template_certificado_id) VALUES (?, ?, ?)';
+      'INSERT INTO eventos (nome_evento, template_certificado_id) VALUES (?, ?)';
     const values = [
       req.body.nome_evento,
-      req.body.status_evento,
       req.body.template_certificado_id,
     ];
     await client.query(sql, values);
@@ -48,10 +47,9 @@ async function criarEvento(req, res) {
 async function atualizarEvento(req, res) {
   try {
     const sql =
-      'UPDATE eventos SET nome_evento=?, status_evento=?, template_certificado_id=? WHERE id=?';
+      'UPDATE eventos SET nome_evento=?, template_certificado_id=? WHERE id=?';
     const values = [
       req.body.nome_evento,
-      req.body.status_evento,
       req.body.template_certificado_id,
       req.params.id,
     ];
@@ -70,7 +68,8 @@ async function excluirEvento(req, res) {
     res.sendStatus(204);
   } catch (error) {
     console.error('Erro ao excluir evento:', error.message);
-    res.status(500).json({ erro: 'Erro interno ao excluir evento.' });
+    // Mostre o erro real para facilitar o diagnóstico
+    res.status(500).json({ erro: 'Erro interno ao excluir evento.', detalhes: error.message });
   }
 }
 

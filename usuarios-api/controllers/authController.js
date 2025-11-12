@@ -23,13 +23,7 @@ async function login(req, res) {
 
     //Cria token simples e expiração (2h)
     const token = crypto.randomBytes(32).toString('hex');
-    const expiraEm = new Date(Date.now() + 2 * 60 * 60 * 1000); // agora + 2h
-
-    //Grava sessão
-    await client.query(
-      'INSERT INTO sessoes (usuario_id, token, expira_em) VALUES (?, ?, ?)',
-      [usuario.id, token, expiraEm]
-    );
+    const expiraEm = new Date(Date.now() + 2 * 60 * 60 * 1000);
 
     //Retorna token e dados básicos do usuário
     return res.status(200).json({

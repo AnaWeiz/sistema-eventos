@@ -1,4 +1,4 @@
-const client = require('../config/database'); // ← caminho corrigido
+const client = require('../config/database'); 
 
 //Listar todas as inscrições
 async function listarInscricoes(req, res) {

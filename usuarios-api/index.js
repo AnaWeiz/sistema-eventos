@@ -5,7 +5,6 @@ const app = express();
 //Importar rotas
 const usuarioRoutes = require('./routes/usuarioRoutes');
 const authRoutes = require('./routes/authRoutes');
-const sessaoRoutes = require('./routes/sessaoRoutes');
 const logAcessoRoutes = require('./routes/logAcessoRoutes');
 
 //Middleware para tratar JSON
@@ -14,7 +13,6 @@ app.use(express.json());
 //Rotas principais
 app.use('/usuarios', usuarioRoutes);
 app.use('/auth', authRoutes);
-app.use('/sessoes', sessaoRoutes);
 app.use('/logs', logAcessoRoutes);
 
 //Porta configurada no .env

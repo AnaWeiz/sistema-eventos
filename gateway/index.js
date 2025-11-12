@@ -50,6 +50,7 @@ app.use('/template-certificados', createProxyMiddleware({ target: 'http://localh
 
 app.use('/usuarios', createProxyMiddleware({ target: 'http://localhost:3001', changeOrigin: true }));
 app.use('/auth', createProxyMiddleware({ target: 'http://localhost:3001', changeOrigin: true }));
+app.use('/logs', createProxyMiddleware({ target: 'http://localhost:3001', changeOrigin: true }));
 
 app.use('/emails', createProxyMiddleware({ target: 'http://localhost:3004', changeOrigin: true }));
 
