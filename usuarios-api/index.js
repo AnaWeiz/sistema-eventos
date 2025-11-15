@@ -1,9 +1,11 @@
 require('dotenv').config({ path: '../.env' });
 const express = require('express');
+const { verifyJWT } = require('../middleware/authToken.js');
 const app = express();
 
 //Importar rotas
 const usuarioRoutes = require('./routes/usuarioRoutes');
+const usuarioController = require('./controllers/usuarioController.js');
 const authRoutes = require('./routes/authRoutes');
 const logAcessoRoutes = require('./routes/logAcessoRoutes');
 
@@ -11,9 +13,11 @@ const logAcessoRoutes = require('./routes/logAcessoRoutes');
 app.use(express.json());
 
 //Rotas principais
-app.use('/usuarios', usuarioRoutes);
 app.use('/auth', authRoutes);
+app.use('/register', usuarioController.criarUsuario);
+app.use(verifyJWT)
 app.use('/logs', logAcessoRoutes);
+app.use('/usuarios', usuarioRoutes);
 
 //Porta configurada no .env
 const PORT = Number(process.env.USUARIOS_PORT) || 3003;

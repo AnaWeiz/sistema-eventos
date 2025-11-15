@@ -1,6 +1,7 @@
 require('dotenv').config({ path: '../.env' });
-
 const express = require('express');
+const { verifyJWT } = require('../middleware/authToken.js');
+
 const app = express();
 
 const eventoRoutes = require('./routes/eventoRoutes');
@@ -8,7 +9,7 @@ const inscricaoRoutes = require('./routes/inscricaoRoutes');
 const presencaRoutes = require('./routes/presencaRoutes');
 
 app.use(express.json());
-
+app.use(verifyJWT)
 app.use('/eventos', eventoRoutes);
 app.use('/inscricoes', inscricaoRoutes);
 app.use('/presencas', presencaRoutes);

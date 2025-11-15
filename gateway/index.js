@@ -24,7 +24,6 @@ app.use('/inscricoes', createProxyMiddleware({ target: 'http://localhost:3002', 
 app.use('/presencas', createProxyMiddleware({ target: 'http://localhost:3002', changeOrigin: true }));
 
 app.use('/certificados', createProxyMiddleware({ target: 'http://localhost:3003', changeOrigin: true }));
-app.use('/template-certificados', createProxyMiddleware({ target: 'http://localhost:3003', changeOrigin: true }));
 
 app.use('/usuarios', createProxyMiddleware({ target: 'http://localhost:3001', changeOrigin: true }));
 app.use('/auth', createProxyMiddleware({ target: 'http://localhost:3001', changeOrigin: true }));

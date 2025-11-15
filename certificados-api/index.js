@@ -1,12 +1,13 @@
 require('dotenv').config({ path: '../.env' });
-
 const express = require('express');
+const { verifyJWT } = require('../middleware/authToken.js');
+
 const app = express();
 
 const certificadoRoutes = require('./routes/certificadoRoutes');
 
 app.use(express.json());
-
+app.use(verifyJWT)
 app.use('/certificados', certificadoRoutes);
 
 const PORT = Number(process.env.CERTIFICADOS_PORT) || 3003;

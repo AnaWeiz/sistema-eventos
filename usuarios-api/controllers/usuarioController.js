@@ -1,4 +1,5 @@
 const client = require('../config/database');
+const bcrypt = require('bcrypt');
 
 //Listar todos os usuários
 async function listarUsuarios(req, res) {
@@ -29,16 +30,19 @@ async function buscarUsuario(req, res) {
 //Inserir novo usuário
 async function criarUsuario(req, res) {
   try {
+    const saltRounds = 10;
+    const hashedPassword = await bcrypt.hash( req.body.senha, saltRounds)
     const sql =
       'INSERT INTO usuarios (nome, email, senha, cadastro_completo) VALUES (?, ?, ?, ?)';
     const values = [
       req.body.nome,
       req.body.email,
-      req.body.senha,
+      hashedPassword,
       req.body.cadastro_completo || false,
     ];
-    await client.query(sql, values);
-    res.sendStatus(201);
+    
+    const newUser = await client.query(sql, values);
+    res.status(201).json(newUser);
   } catch (error) {
     console.error('Erro ao criar usuário:', error.message);
     res.status(500).json({ erro: 'Erro interno ao criar usuário.' });
