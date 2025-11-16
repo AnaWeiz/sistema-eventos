@@ -12,8 +12,6 @@ servers:
     description: Certificados API
   - url: http://localhost:3004
     description: Notificações API
-  - url: http://localhost:3005
-    description: Sincronização API
 
 paths:
   /eventos:

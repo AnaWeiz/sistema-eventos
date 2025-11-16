@@ -30,10 +30,10 @@ async function buscarEvento(req, res) {
 async function criarEvento(req, res) {
   try {
     const sql =
-      'INSERT INTO eventos (nome_evento, template_certificado_id) VALUES (?, ?)';
+      'INSERT INTO eventos (nome_evento, data_final) VALUES (?, ?)';
     const values = [
       req.body.nome_evento,
-      req.body.template_certificado_id,
+      req.body.data_final,
     ];
     await client.query(sql, values);
     res.sendStatus(201);
@@ -47,10 +47,10 @@ async function criarEvento(req, res) {
 async function atualizarEvento(req, res) {
   try {
     const sql =
-      'UPDATE eventos SET nome_evento=?, template_certificado_id=? WHERE id=?';
+      'UPDATE eventos SET nome_evento=?, data_final=? WHERE id=?';
     const values = [
       req.body.nome_evento,
-      req.body.template_certificado_id,
+      req.body.data_final,
       req.params.id,
     ];
     await client.query(sql, values);

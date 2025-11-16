@@ -33,12 +33,11 @@ async function criarUsuario(req, res) {
     const saltRounds = 10;
     const hashedPassword = await bcrypt.hash( req.body.senha, saltRounds)
     const sql =
-      'INSERT INTO usuarios (nome, email, senha, cadastro_completo) VALUES (?, ?, ?, ?)';
+      'INSERT INTO usuarios (nome, email, senha) VALUES (?, ?, ?, ?)';
     const values = [
       req.body.nome,
       req.body.email,
       hashedPassword,
-      req.body.cadastro_completo || false,
     ];
     
     const newUser = await client.query(sql, values);
@@ -53,12 +52,11 @@ async function criarUsuario(req, res) {
 async function atualizarUsuario(req, res) {
   try {
     const sql =
-      'UPDATE usuarios SET nome=?, email=?, senha=?, cadastro_completo=? WHERE id=?';
+      'UPDATE usuarios SET nome=?, email=?, senha=? WHERE id=?';
     const values = [
       req.body.nome,
       req.body.email,
       req.body.senha,
-      req.body.cadastro_completo,
       req.params.id,
     ];
     await client.query(sql, values);

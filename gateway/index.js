@@ -31,8 +31,6 @@ app.use('/logs', createProxyMiddleware({ target: 'http://localhost:3001', change
 
 app.use('/emails', createProxyMiddleware({ target: 'http://localhost:3004', changeOrigin: true }));
 
-app.use('/sincronizacao', createProxyMiddleware({ target: 'http://localhost:3005', changeOrigin: true }));
-
 //Opcional: Proxy para documentação centralizada
 app.use('/docs', createProxyMiddleware({ target: 'http://localhost:3006', changeOrigin: true }));
 

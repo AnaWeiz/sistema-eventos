@@ -11,9 +11,8 @@
     "start:certificados": "npm run start -w certificados-api start",
     "start:eventos": "npm run start -w eventos-api start",
     "start:notificacoes": "npm run start -w notificacoes-api start",
-    "start:sincronizacao": "npm run start -w sincronizacao-api start",
     "start:usuarios": "npm run start -w usuarios-api start",
-    "start:all": "concurrently \"npm run start -w certificados-api\" \"npm run start -w eventos-api\" \"npm run start -w notificacoes-api\" \"npm run start -w sincronizacao-api\" \"npm run start -w usuarios-api\" \"npm run start -w gateway\""
+    "start:all": "concurrently \"npm run start -w certificados-api\" \"npm run start -w eventos-api\" \"npm run start -w notificacoes-api\" \"npm run start -w usuarios-api\" \"npm run start -w gateway\""
   },
   "keywords": [],
   "author": "",
