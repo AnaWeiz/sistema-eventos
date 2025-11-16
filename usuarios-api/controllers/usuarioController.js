@@ -33,7 +33,7 @@ async function criarUsuario(req, res) {
     const saltRounds = 10;
     const hashedPassword = await bcrypt.hash( req.body.senha, saltRounds)
     const sql =
-      'INSERT INTO usuarios (nome, email, senha) VALUES (?, ?, ?, ?)';
+      'INSERT INTO usuarios (nome, email, senha) VALUES (?, ?, ?)';
     const values = [
       req.body.nome,
       req.body.email,

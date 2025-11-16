@@ -1,3 +1,4 @@
+const { DateTime } = require("luxon");
 const client = require('../config/database');
 
 //Listar todos os eventos
@@ -29,11 +30,23 @@ async function buscarEvento(req, res) {
 //Criar novo evento
 async function criarEvento(req, res) {
   try {
+    const { nome_evento, data_final } = req.body;
+
+    const dt = DateTime
+      .fromISO(data_final, { zone: "America/Sao_Paulo" })
+      .setZone("America/Sao_Paulo");
+
+    if (!dt.isValid) {
+      return res.status(400).json({ erro: "Data inválida" });
+    }
+
+    const mysqlDatetime = dt.toFormat("yyyy-LL-dd HH:mm:ss");
+
     const sql =
       'INSERT INTO eventos (nome_evento, data_final) VALUES (?, ?)';
     const values = [
-      req.body.nome_evento,
-      req.body.data_final,
+      nome_evento,
+      mysqlDatetime,
     ];
     await client.query(sql, values);
     res.sendStatus(201);
