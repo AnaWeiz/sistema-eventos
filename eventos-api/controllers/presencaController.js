@@ -26,6 +26,21 @@ async function buscarPresenca(req, res) {
   }
 }
 
+//Buscar presença por usuário ID
+async function buscarPresencaPorUsuarioId(req, res) {
+  try {
+    const [rows] = await client.query('SELECT * FROM presencas WHERE usuario_id=?', [req.params.usuario_id]);
+    if (rows.length > 0) {
+      res.json(rows[0]);
+    } else {
+      res.sendStatus(404);
+    }
+  } catch (error) {
+    console.error('Erro ao buscar presença:', error.message);
+    res.status(500).json({ erro: 'Erro interno ao buscar presença.' });
+  }
+}
+
 //Criar nova presença (check-in)
 async function criarPresenca(req, res) {
   try {
@@ -63,4 +78,4 @@ async function excluirPresenca(req, res) {
   }
 }
 
-module.exports = { listarPresencas, buscarPresenca, criarPresenca, atualizarPresenca, excluirPresenca };
+module.exports = { listarPresencas, buscarPresenca, buscarPresencaPorUsuarioId, criarPresenca, atualizarPresenca, excluirPresenca };

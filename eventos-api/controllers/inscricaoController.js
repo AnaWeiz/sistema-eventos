@@ -30,11 +30,10 @@ async function buscarInscricao(req, res) {
 async function criarInscricao(req, res) {
   try {
     const sql =
-      'INSERT INTO inscricoes (usuario_id, evento_id, status_inscricao) VALUES (?, ?, ?)';
+      'INSERT INTO inscricoes (usuario_id, evento_id) VALUES (?, ?)';
     const values = [
       req.body.usuario_id,
       req.body.evento_id,
-      req.body.status_inscricao,
     ];
     await client.query(sql, values);
     res.sendStatus(201);
@@ -48,11 +47,10 @@ async function criarInscricao(req, res) {
 async function atualizarInscricao(req, res) {
   try {
     const sql =
-      'UPDATE inscricoes SET usuario_id=?, evento_id=?, status_inscricao=? WHERE id=?';
+      'UPDATE inscricoes SET usuario_id=?, evento_id=? WHERE id=?';
     const values = [
       req.body.usuario_id,
       req.body.evento_id,
-      req.body.status_inscricao,
       req.params.id,
     ];
     await client.query(sql, values);

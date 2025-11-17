@@ -27,6 +27,23 @@ async function buscarUsuario(req, res) {
   }
 }
 
+//Buscar usuário por email
+async function buscarUsuarioPorEmail(req, res) {
+  console.log("AQUI CHEGOU!")
+  console.log(req)
+  try {
+    const [rows] = await client.query('SELECT * FROM usuarios WHERE email=?', [req.params.email]);
+    if (rows.length > 0) {
+      res.json(rows[0]);
+    } else {
+      res.sendStatus(404);
+    }
+  } catch (error) {
+    console.error('Erro ao buscar usuário:', error.message);
+    res.status(500).json({ erro: 'Erro interno ao buscar usuário.' });
+  }
+}
+
 //Inserir novo usuário
 async function criarUsuario(req, res) {
   try {
@@ -78,4 +95,4 @@ async function excluirUsuario(req, res) {
   }
 }
 
-module.exports = { listarUsuarios, buscarUsuario, criarUsuario, atualizarUsuario, excluirUsuario };
+module.exports = { listarUsuarios, buscarUsuario, buscarUsuarioPorEmail, criarUsuario, atualizarUsuario, excluirUsuario };

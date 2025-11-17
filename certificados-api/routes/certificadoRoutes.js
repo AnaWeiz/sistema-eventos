@@ -6,6 +6,7 @@ const fs = require('fs');
 
 router.get('/', certificadoController.listarCertificados);
 router.get('/:id', certificadoController.buscarCertificado);
+router.post('/verCertificado', certificadoController.buscarCertificadoPorHash);
 router.post('/', certificadoController.criarCertificado);
 router.put('/:id', certificadoController.atualizarCertificado);
 router.delete('/:id', certificadoController.excluirCertificado);
