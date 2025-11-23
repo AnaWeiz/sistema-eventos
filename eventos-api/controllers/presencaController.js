@@ -33,7 +33,7 @@ async function buscarPresencaPorUsuarioId(req, res) {
     if (rows.length > 0) {
       res.json(rows[0]);
     } else {
-      res.sendStatus(404);
+      res.json(null);
     }
   } catch (error) {
     console.error('Erro ao buscar presença:', error.message);

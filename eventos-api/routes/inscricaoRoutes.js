@@ -3,6 +3,7 @@ const router = express.Router();
 const inscricaoController = require('../controllers/inscricaoController');
 
 // Rotas principais de inscrições
+router.get('/porUserID/:usuario_id', inscricaoController.buscarInscricaoPorUsuarioID);
 router.get('/', inscricaoController.listarInscricoes);
 router.get('/:id', inscricaoController.buscarInscricao);
 router.post('/', inscricaoController.criarInscricao);

@@ -29,14 +29,12 @@ async function buscarUsuario(req, res) {
 
 //Buscar usuário por email
 async function buscarUsuarioPorEmail(req, res) {
-  console.log("AQUI CHEGOU!")
-  console.log(req)
   try {
     const [rows] = await client.query('SELECT * FROM usuarios WHERE email=?', [req.params.email]);
     if (rows.length > 0) {
       res.json(rows[0]);
     } else {
-      res.sendStatus(404);
+      res.json(null);
     }
   } catch (error) {
     console.error('Erro ao buscar usuário:', error.message);
@@ -46,6 +44,8 @@ async function buscarUsuarioPorEmail(req, res) {
 
 //Inserir novo usuário
 async function criarUsuario(req, res) {
+  console.log(req.body)
+  console.log("CHEGUEI NO CRIAR")
   try {
     const saltRounds = 10;
     const hashedPassword = await bcrypt.hash( req.body.senha, saltRounds)
@@ -58,7 +58,11 @@ async function criarUsuario(req, res) {
     ];
     
     const newUser = await client.query(sql, values);
-    res.status(201).json(newUser);
+    res.status(201).json({
+      id: newUser.insertId,
+      nome: req.body.nome,
+      email: req.body.email
+    });
   } catch (error) {
     console.error('Erro ao criar usuário:', error.message);
     res.status(500).json({ erro: 'Erro interno ao criar usuário.' });

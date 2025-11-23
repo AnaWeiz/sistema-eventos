@@ -8,11 +8,12 @@
   ],
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
+    "start:sincronizar": "npm run start -w sincronizar-api start",
     "start:certificados": "npm run start -w certificados-api start",
     "start:eventos": "npm run start -w eventos-api start",
     "start:notificacoes": "npm run start -w notificacoes-api start",
     "start:usuarios": "npm run start -w usuarios-api start",
-    "start:all": "concurrently \"npm run start -w certificados-api\" \"npm run start -w eventos-api\" \"npm run start -w notificacoes-api\" \"npm run start -w usuarios-api\" \"npm run start -w gateway\""
+    "start:all": "concurrently \"npm run start -w sincronizar-api\" \"npm run start -w certificados-api\" \"npm run start -w eventos-api\" \"npm run start -w notificacoes-api\" \"npm run start -w usuarios-api\" \"npm run start -w gateway\""
   },
   "keywords": [],
   "author": "",

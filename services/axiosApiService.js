@@ -1,6 +1,6 @@
 const axios = require('axios');
 
-async function chamarOutraApi(porta, rota, token) {
+async function get(porta, rota, token) {
   try {
     const resposta = await axios.get(`http://localhost:${porta}/${rota}`, {
       headers: {
@@ -14,4 +14,18 @@ async function chamarOutraApi(porta, rota, token) {
   }
 }
 
-module.exports = {chamarOutraApi}
+async function post(porta, rota, data, token){
+  try {
+    const response = await axios.post(`http://localhost:${porta}/${rota}`, data, {
+      headers: {
+        Authorization: token
+      }
+    })
+    return response.data
+  } catch (erro) {
+    console.error(`Erro ao chamar API http://localhost:${porta}/${rota}`, erro.message);
+    return null
+  }
+}
+
+module.exports = { get, post }

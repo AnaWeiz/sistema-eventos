@@ -26,6 +26,21 @@ async function buscarInscricao(req, res) {
   }
 }
 
+// Buscar inscrição por usuarioID
+async function buscarInscricaoPorUsuarioID(req, res) {
+  try {
+    const [rows] = await client.query('SELECT * FROM inscricoes WHERE usuario_id=?', [req.params.usuario_id]);
+    if (rows.length > 0) {
+      res.json(rows[0]);
+    } else {
+      res.json(null);
+    }
+  } catch (error) {
+    console.error('Erro ao buscar inscrição:', error.message);
+    res.status(500).json({ erro: 'Erro interno ao buscar inscrição.' });
+  }
+}
+
 //Criar nova inscrição
 async function criarInscricao(req, res) {
   try {
@@ -72,4 +87,4 @@ async function excluirInscricao(req, res) {
   }
 }
 
-module.exports = { listarInscricoes, buscarInscricao, criarInscricao, atualizarInscricao, excluirInscricao };
+module.exports = { listarInscricoes, buscarInscricao, buscarInscricaoPorUsuarioID, criarInscricao, atualizarInscricao, excluirInscricao };

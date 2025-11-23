@@ -37,13 +37,13 @@ async function buscarCertificadoPorHash(req, res) {
 
     const token = req.headers.authorization;
 
-    const usuario = await axiosRequest.chamarOutraApi(3000, `usuarios/usuarios/${rows[0].usuario_id}`, token);
+    const usuario = await axiosRequest.get(3000, `usuarios/usuarios/${rows[0].usuario_id}`, token);
 
     if(!usuario || usuario.length === 0){
       res.status(401).json({ erro: 'Usuário não encontrados' });
     }
 
-    const evento = await axiosRequest.chamarOutraApi(3000, `eventos/eventos/${rows[0].evento_id}`, token);
+    const evento = await axiosRequest.get(3000, `eventos/eventos/${rows[0].evento_id}`, token);
 
     if(!evento || evento.length === 0){
       res.status(401).json({ erro: 'Evento não encontrados' });
@@ -64,17 +64,17 @@ async function buscarCertificadoPorHash(req, res) {
 async function criarCertificado(req, res) {
   const { usuario_email, evento_id } = req.body;
   const token = req.headers.authorization;
-  const usuario = await axiosRequest.chamarOutraApi(3000, `usuarios/usuarios?email=${usuario_email}`, token);
+  const usuario = await axiosRequest.get(3000, `usuarios/usuarios?email=${usuario_email}`, token);
   if(!usuario || usuario.length === 0){
     res.status(401).json({ erro: 'Usuário não encontrados' });
   }
 
-  const evento = await axiosRequest.chamarOutraApi(3000, `eventos/eventos/${evento_id}`, token);
+  const evento = await axiosRequest.get(3000, `eventos/eventos/${evento_id}`, token);
 
   if(!evento || evento.length === 0){
     res.status(401).json({ erro: 'Evento não encontrados' });
   }
-  const presenca = await axiosRequest.chamarOutraApi(3000, `presencas/presencas/presencaUsuario/${usuario[0].id}`, token);
+  const presenca = await axiosRequest.get(3000, `presencas/presencas/presencaUsuario/${usuario[0].id}`, token);
 
   if(!presenca || presenca.length === 0){
     res.status(401).json({ erro: 'Presenca não encontrados' });
