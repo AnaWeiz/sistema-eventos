@@ -9,8 +9,34 @@ const generateCSV = require('../services/generateCSV');
 dotenv.config({ path: '../.env' });
 
 const app = express();
-// app.use(express.json())
-// VER DO EXPRESS.JSON
+
+function capturarBodyParaError(req, res, next) {
+  if (['POST', 'PUT', 'PATCH'].includes(req.method)) {
+    let chunks = [];
+
+    req.on('data', chunk => {
+      chunks.push(chunk);
+    });
+    
+    req.on('end', () => {
+      const buffer = Buffer.concat(chunks);
+
+      try {
+        req.bodyBackup = JSON.parse(buffer.toString());
+      } catch (e) {
+        req.bodyBackup = {};
+      }
+      
+      req.push(buffer);
+      req.push(null);
+      
+      next();
+    });
+  } else {
+    next();
+  }
+}
+
 //Registrar logs em arquivo
 function registrarLog(req, res, next) {
   const log = `[${new Date().toISOString()}] ${req.method} ${req.originalUrl} - ${req.ip}\n`;
@@ -19,49 +45,41 @@ function registrarLog(req, res, next) {
 }
 app.use(registrarLog);
 
-//Proxy para cada microserviço
-app.use('/auth', createProxyMiddleware({ target: 'http://localhost:3001', changeOrigin: true,
+//Proxy para cada microserviço com offline
+app.use('/auth', capturarBodyParaError, createProxyMiddleware({ target: 'http://localhost:30010', changeOrigin: true,
   proxyTimeout: 2000,
   timeout: 2000,
   on: {
     error: (err, req, res) => {
-      console.log(err)
       if(req.path == '/auth/login') {
-        generateCSV.adicionarRegistro(req.body.email, undefined)
+        generateCSV.adicionarRegistro(req.bodyBackup.email, undefined)
       }
     }
   },
 }));
-
-app.use('/usuarios', createProxyMiddleware({ target: 'http://localhost:3001', changeOrigin: true, 
+app.use('/usuarios', capturarBodyParaError, createProxyMiddleware({ target: 'http://localhost:3001', changeOrigin: true, 
   proxyTimeout: 2000,
   timeout: 2000,
   on: {
     error: (err, req, res) => {
       if (req.path == '/register') {
-        generateCSV.adicionarRegistro(req.body.email, "123")
+        generateCSV.adicionarRegistro(req.bodyBackup.email, "123")
       }
     }
   }
 }));
-
-app.use('/logs', createProxyMiddleware({ target: 'http://localhost:3001', changeOrigin: true }));
-
-app.use('/eventos', createProxyMiddleware({ target: 'http://localhost:3002', changeOrigin: true }));
-
-app.use('/inscricoes', createProxyMiddleware({ target: 'http://localhost:3002', changeOrigin: true,
+app.use('/inscricoes', capturarBodyParaError, createProxyMiddleware({ target: 'http://localhost:3002', changeOrigin: true,
   proxyTimeout: 2000,
   timeout: 2000,
   on: {
     error: (err, req, res) => {
       if(req.path == '/inscricoes') {
-        generateCSV.anexarCamposPorEmail(req.body.email, [req.body.evento_id])
+        generateCSV.anexarCamposPorEmail(req.bodyBackup.email, [req.bodyBackup.evento_id])
       }
     }
   }
 }));
-
-app.use('/presencas', createProxyMiddleware({ target: 'http://localhost:3002', changeOrigin: true,
+app.use('/presencas', capturarBodyParaError, createProxyMiddleware({ target: 'http://localhost:3002', changeOrigin: true,
   proxyTimeout: 2000,
   timeout: 2000,
   on: {
@@ -69,16 +87,16 @@ app.use('/presencas', createProxyMiddleware({ target: 'http://localhost:3002', c
       console.log(req.path)
       console.log(req.body)
       if(req.path == '/presencas') {
-        generateCSV.anexarCamposPorEmail(req.body.email, ['true'])
+        generateCSV.anexarCamposPorEmail(req.bodyBackup.email, ['true'])
       }
     }
   } 
 }));
-
+//Proxy para cada microserviço sem offline
+app.use('/logs', createProxyMiddleware({ target: 'http://localhost:3001', changeOrigin: true }));
+app.use('/eventos', createProxyMiddleware({ target: 'http://localhost:3002', changeOrigin: true }));
 app.use('/certificados', createProxyMiddleware({ target: 'http://localhost:3003', changeOrigin: true }));
-
 app.use('/emails', createProxyMiddleware({ target: 'http://localhost:3004', changeOrigin: true }));
-
 app.use('/sincronizar', createProxyMiddleware({ target: 'http://localhost:3005', changeOrigin: true }));
 
 //Opcional: Proxy para documentação centralizada

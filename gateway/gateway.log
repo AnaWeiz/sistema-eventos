@@ -594,3 +594,11 @@
 [2025-11-23T02:19:44.947Z] GET /inscricoes/inscricoes/porUserID/15 - ::1
 [2025-11-23T02:19:44.959Z] GET /presencas/presencas/presencaUsuario/15 - ::1
 [2025-11-23T02:19:44.969Z] POST /presencas/presencas/ - ::1
+[2025-11-23T18:04:28.741Z] POST /auth/auth/login - ::1
+[2025-11-23T18:05:14.317Z] POST /auth/auth/login - ::1
+[2025-11-23T18:05:57.201Z] POST /auth/auth/login - ::1
+[2025-11-23T18:06:54.520Z] POST /auth/auth/login - ::1
+[2025-11-23T18:11:04.976Z] POST /auth/auth/login - ::1
+[2025-11-23T18:12:17.295Z] POST /auth/auth/login - ::1
+[2025-11-23T18:12:44.788Z] POST /auth/auth/login - ::1
+[2025-11-23T18:14:24.061Z] POST /auth/auth/login - ::1
