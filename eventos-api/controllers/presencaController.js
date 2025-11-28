@@ -1,4 +1,5 @@
 const client = require('../config/database'); // ← caminho corrigido
+const axiosRequest = require('../../services/axiosApiService')
 
 //Listar todas as presenças
 async function listarPresencas(req, res) {
@@ -44,9 +45,20 @@ async function buscarPresencaPorUsuarioId(req, res) {
 //Criar nova presença (check-in)
 async function criarPresenca(req, res) {
   try {
+    const token = req.headers.authorization;
     const sql = 'INSERT INTO presencas (inscricao_id, usuario_id, evento_id) VALUES (?, ?, ?)';
     const values = [req.body.inscricao_id, req.body.usuario_id, req.body.evento_id];
     await client.query(sql, values);
+
+    const usuarioDetails = await axiosRequest.get(3000, `usuarios/usuarios/${req.body.usuario_id}`, token)
+    const presencaData = {
+      para: usuarioDetails.email,
+      assunto: "Check-in efetuado com sucesso",
+      texto: "Check-in efetuado com sucesso!"
+    }
+    
+    axiosRequest.post(3000, 'emails/notificacoes/email/', presencaData)
+
     res.sendStatus(201);
   } catch (error) {
     console.error('Erro ao criar presença:', error.message);

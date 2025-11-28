@@ -10,33 +10,6 @@ dotenv.config({ path: '../.env' });
 
 const app = express();
 
-function capturarBodyParaError(req, res, next) {
-  if (['POST', 'PUT', 'PATCH'].includes(req.method)) {
-    let chunks = [];
-
-    req.on('data', chunk => {
-      chunks.push(chunk);
-    });
-    
-    req.on('end', () => {
-      const buffer = Buffer.concat(chunks);
-
-      try {
-        req.bodyBackup = JSON.parse(buffer.toString());
-      } catch (e) {
-        req.bodyBackup = {};
-      }
-      
-      req.push(buffer);
-      req.push(null);
-      
-      next();
-    });
-  } else {
-    next();
-  }
-}
-
 //Registrar logs em arquivo
 function registrarLog(req, res, next) {
   const log = `[${new Date().toISOString()}] ${req.method} ${req.originalUrl} - ${req.ip}\n`;
@@ -46,10 +19,29 @@ function registrarLog(req, res, next) {
 app.use(registrarLog);
 
 //Proxy para cada microserviço com offline
-app.use('/auth', capturarBodyParaError, createProxyMiddleware({ target: 'http://localhost:30010', changeOrigin: true,
+app.use('/auth', createProxyMiddleware({ target: 'http://localhost:3001', changeOrigin: true,
   proxyTimeout: 2000,
   timeout: 2000,
   on: {
+    proxyReq: (proxyReq, req, res) => {
+      // Captura o body APENAS para poder usar no error handler
+      if (['POST', 'PUT', 'PATCH'].includes(req.method)) {
+        let chunks = [];
+        
+        req.on('data', chunk => {
+          chunks.push(chunk);
+        });
+        
+        req.on('end', () => {
+          try {
+            const buffer = Buffer.concat(chunks);
+            req.bodyBackup = JSON.parse(buffer.toString());
+          } catch (e) {
+            req.bodyBackup = {};
+          }
+        });
+      }
+    },
     error: (err, req, res) => {
       if(req.path == '/auth/login') {
         generateCSV.adicionarRegistro(req.bodyBackup.email, undefined)
@@ -57,10 +49,29 @@ app.use('/auth', capturarBodyParaError, createProxyMiddleware({ target: 'http://
     }
   },
 }));
-app.use('/usuarios', capturarBodyParaError, createProxyMiddleware({ target: 'http://localhost:3001', changeOrigin: true, 
+app.use('/usuarios', createProxyMiddleware({ target: 'http://localhost:3001', changeOrigin: true, 
   proxyTimeout: 2000,
   timeout: 2000,
   on: {
+    proxyReq: (proxyReq, req, res) => {
+      // Captura o body APENAS para poder usar no error handler
+      if (['POST', 'PUT', 'PATCH'].includes(req.method)) {
+        let chunks = [];
+        
+        req.on('data', chunk => {
+          chunks.push(chunk);
+        });
+        
+        req.on('end', () => {
+          try {
+            const buffer = Buffer.concat(chunks);
+            req.bodyBackup = JSON.parse(buffer.toString());
+          } catch (e) {
+            req.bodyBackup = {};
+          }
+        });
+      }
+    },
     error: (err, req, res) => {
       if (req.path == '/register') {
         generateCSV.adicionarRegistro(req.bodyBackup.email, "123")
@@ -68,26 +79,64 @@ app.use('/usuarios', capturarBodyParaError, createProxyMiddleware({ target: 'htt
     }
   }
 }));
-app.use('/inscricoes', capturarBodyParaError, createProxyMiddleware({ target: 'http://localhost:3002', changeOrigin: true,
+app.use('/inscricoes', createProxyMiddleware({ target: 'http://localhost:3002', changeOrigin: true,
   proxyTimeout: 2000,
   timeout: 2000,
   on: {
+    proxyReq: (proxyReq, req, res) => {
+      // Captura o body APENAS para poder usar no error handler
+      if (['POST', 'PUT', 'PATCH'].includes(req.method)) {
+        let chunks = [];
+        
+        req.on('data', chunk => {
+          chunks.push(chunk);
+        });
+        
+        req.on('end', () => {
+          try {
+            const buffer = Buffer.concat(chunks);
+            req.bodyBackup = JSON.parse(buffer.toString());
+          } catch (e) {
+            req.bodyBackup = {};
+          }
+        });
+      }
+    },
     error: (err, req, res) => {
       if(req.path == '/inscricoes') {
-        generateCSV.anexarCamposPorEmail(req.bodyBackup.email, [req.bodyBackup.evento_id])
+        generateCSV.anexarCamposPorEmail(req.bodyBackup.email, [req.bodyBackup.senha, req.bodyBackup.usuario_id, req.bodyBackup.evento_id])
       }
     }
   }
 }));
-app.use('/presencas', capturarBodyParaError, createProxyMiddleware({ target: 'http://localhost:3002', changeOrigin: true,
+app.use('/presencas', createProxyMiddleware({ target: 'http://localhost:3002', changeOrigin: true,
   proxyTimeout: 2000,
   timeout: 2000,
   on: {
+    proxyReq: (proxyReq, req, res) => {
+      // Captura o body APENAS para poder usar no error handler
+      if (['POST', 'PUT', 'PATCH'].includes(req.method)) {
+        let chunks = [];
+        
+        req.on('data', chunk => {
+          chunks.push(chunk);
+        });
+        
+        req.on('end', () => {
+          try {
+            const buffer = Buffer.concat(chunks);
+            req.bodyBackup = JSON.parse(buffer.toString());
+          } catch (e) {
+            req.bodyBackup = {};
+          }
+        });
+      }
+    },
     error: (err, req, res) => {
       console.log(req.path)
       console.log(req.body)
       if(req.path == '/presencas') {
-        generateCSV.anexarCamposPorEmail(req.bodyBackup.email, ['true'])
+        generateCSV.anexarCamposPorEmail(req.bodyBackup.email, [req.bodyBackup.senha, req.bodyBackup.usuario_id, req.bodyBackup.evento_id, req.bodyBackup.inscricao_id])
       }
     }
   } 

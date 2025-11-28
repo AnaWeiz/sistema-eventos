@@ -1,5 +1,6 @@
 const client = require('../config/database');
 const bcrypt = require('bcrypt');
+const axiosRequest = require('../../services/axiosApiService');
 
 //Listar todos os usuários
 async function listarUsuarios(req, res) {
@@ -44,8 +45,6 @@ async function buscarUsuarioPorEmail(req, res) {
 
 //Inserir novo usuário
 async function criarUsuario(req, res) {
-  console.log(req.body)
-  console.log("CHEGUEI NO CRIAR")
   try {
     const saltRounds = 10;
     const hashedPassword = await bcrypt.hash( req.body.senha, saltRounds)
@@ -58,6 +57,15 @@ async function criarUsuario(req, res) {
     ];
     
     const newUser = await client.query(sql, values);
+
+    const emailData = {
+      para: req.body.email,
+      assunto: "Conta criada",
+      texto: "Conta criada com sucesso!"
+    }
+
+    axiosRequest.post(3000, 'emails/notificacoes/email/', emailData)
+
     res.status(201).json({
       id: newUser.insertId,
       nome: req.body.nome,
@@ -72,12 +80,14 @@ async function criarUsuario(req, res) {
 //Atualizar usuário
 async function atualizarUsuario(req, res) {
   try {
+    const saltRounds = 10;
+    const hashedPassword = await bcrypt.hash( req.body.senha, saltRounds)
     const sql =
       'UPDATE usuarios SET nome=?, email=?, senha=? WHERE id=?';
     const values = [
       req.body.nome,
       req.body.email,
-      req.body.senha,
+      hashedPassword,
       req.params.id,
     ];
     await client.query(sql, values);

@@ -16,11 +16,13 @@ async function get(porta, rota, token) {
 
 async function post(porta, rota, data, token){
   try {
-    const response = await axios.post(`http://localhost:${porta}/${rota}`, data, {
-      headers: {
+    const config = {};
+    if (token) {
+      config.headers = {
         Authorization: token
-      }
-    })
+      };
+    }
+    const response = await axios.post(`http://localhost:${porta}/${rota}`, data, config)
     return response.data
   } catch (erro) {
     console.error(`Erro ao chamar API http://localhost:${porta}/${rota}`, erro.message);

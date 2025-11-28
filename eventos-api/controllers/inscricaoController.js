@@ -1,4 +1,5 @@
-const client = require('../config/database'); 
+const client = require('../config/database');
+const axiosRequest = require('../../services/axiosApiService');
 
 //Listar todas as inscrições
 async function listarInscricoes(req, res) {
@@ -44,6 +45,7 @@ async function buscarInscricaoPorUsuarioID(req, res) {
 //Criar nova inscrição
 async function criarInscricao(req, res) {
   try {
+    const token = req.headers.authorization;
     const sql =
       'INSERT INTO inscricoes (usuario_id, evento_id) VALUES (?, ?)';
     const values = [
@@ -51,6 +53,16 @@ async function criarInscricao(req, res) {
       req.body.evento_id,
     ];
     await client.query(sql, values);
+
+    console.log(req.body.usuario_id)
+    const usuarioDetails = await axiosRequest.get(3000, `usuarios/usuarios/${req.body.usuario_id}`, token)
+    const inscricaoData = {
+      para: usuarioDetails.email,
+      assunto: "Inscrição efetuada com sucesso",
+      texto: "Inscrição efetuada com sucesso!"
+    }
+    
+    axiosRequest.post(3000, 'emails/notificacoes/email/', inscricaoData)
     res.sendStatus(201);
   } catch (error) {
     console.error('Erro ao criar inscrição:', error.message);
@@ -79,7 +91,18 @@ async function atualizarInscricao(req, res) {
 //Excluir inscrição
 async function excluirInscricao(req, res) {
   try {
+    const token = req.headers.authorization;
+    const inscricaoDetails = await axiosRequest.get(3000, `inscricoes/inscricoes/${req.params.id}`, token)
+    const usuarioDetails = await axiosRequest.get(3000, `usuarios/usuarios/${inscricaoDetails.usuario_id}`, token)
     await client.query('DELETE FROM inscricoes WHERE id=?', [req.params.id]);
+
+    const inscricaoData = {
+      para: usuarioDetails.email,
+      assunto: "Inscrição cancelada",
+      texto: "Inscrição cancelada com sucesso!"
+    }
+    
+    axiosRequest.post(3000, 'emails/notificacoes/email/', inscricaoData)
     res.sendStatus(204);
   } catch (error) {
     console.error('Erro ao excluir inscrição:', error.message);

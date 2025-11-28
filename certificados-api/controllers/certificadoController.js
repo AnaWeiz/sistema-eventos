@@ -62,9 +62,10 @@ async function buscarCertificadoPorHash(req, res) {
 
 //Criar novo certificado
 async function criarCertificado(req, res) {
-  const { usuario_email, evento_id } = req.body;
+  const { email, evento_id } = req.body;
   const token = req.headers.authorization;
-  const usuario = await axiosRequest.get(3000, `usuarios/usuarios?email=${usuario_email}`, token);
+  const usuario = await axiosRequest.get(3000, `usuarios/usuarios/porEmail/${email}`, token);
+
   if(!usuario || usuario.length === 0){
     res.status(401).json({ erro: 'Usuário não encontrados' });
   }
@@ -74,7 +75,7 @@ async function criarCertificado(req, res) {
   if(!evento || evento.length === 0){
     res.status(401).json({ erro: 'Evento não encontrados' });
   }
-  const presenca = await axiosRequest.get(3000, `presencas/presencas/presencaUsuario/${usuario[0].id}`, token);
+  const presenca = await axiosRequest.get(3000, `presencas/presencas/presencaUsuario/${usuario.id}`, token);
 
   if(!presenca || presenca.length === 0){
     res.status(401).json({ erro: 'Presenca não encontrados' });
@@ -88,12 +89,12 @@ async function criarCertificado(req, res) {
     `;
     const values = [
       hash,
-      usuario[0].id,
+      usuario.id,
       evento.id,
       presenca.id,
     ];
     await client.query(sql, values);
-    return gerarPDF(res, usuario[0].nome, evento.nome_evento, hash);
+    return gerarPDF(res, usuario.nome, evento.nome_evento, hash);
   } catch (error) {
     console.error('Erro ao criar certificado:', error.message);
     res.status(500).json({ erro: 'Erro interno ao criar certificado.' });

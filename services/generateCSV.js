@@ -61,7 +61,9 @@ function anexarCamposPorEmail(email, novosCampos) {
   });
 
   if (!encontrou) {
-    console.log('Registro não encontrado para o email informado.');
+    const novaLinha = [email, ...novosCampos].join(',');
+    fs.appendFileSync(filePath, novaLinha + '\n', 'utf8');
+    console.log('Registro não encontrado — linha adicionada com sucesso!');
     return;
   }
 

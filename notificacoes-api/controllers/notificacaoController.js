@@ -1,6 +1,6 @@
 const nodemailer = require('nodemailer');
 
-async function enviarEmail(req, res) {
+function enviarEmail(req, res) {
   const { para, assunto, texto, html } = req.body;
 
   if (!para || !assunto || (!texto && !html)) {
@@ -9,25 +9,26 @@ async function enviarEmail(req, res) {
 
   try {
     const transporter = nodemailer.createTransport({
-      host: process.env.EMAIL_HOST,
-      port: Number(process.env.EMAIL_PORT),
-      secure: false,
+      service: 'gmail',
       auth: {
         user: process.env.EMAIL_USER,
         pass: process.env.EMAIL_PASS
       }
     });
 
-    const info = await transporter.sendMail({
+    const info = transporter.sendMail({
       from: process.env.EMAIL_USER,
       to: para,
       subject: assunto,
       text: texto,
       html: html || `<p>${texto}</p>`
     });
-
-    console.log(`E-mail enviado com sucesso: ${info.messageId}`);
-    res.status(200).json({ sucesso: true, mensagem: 'E-mail enviado com sucesso!' });
+    console.log("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAa")
+    return res.status(200).json({ 
+      sucesso: true, 
+      mensagem: 'E-mail enviado com sucesso!',
+      messageId: info.messageId
+    });
   } catch (erro) {
     console.error('Erro ao enviar e-mail:', erro);
     res.status(500).json({ erro: 'Falha ao enviar o e-mail.', detalhes: erro.message });
